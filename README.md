@@ -33,7 +33,7 @@ com.restaurant.management
 ├── inventory/                # 库存限界上下文（大分包）
 │   └── [同上结构]
 │
-└── EcommerceApplication.java # 应用启动类
+└── RestaurantManagementApplication.java # 应用启动类
 ```
 
 ### 限界上下文说明
