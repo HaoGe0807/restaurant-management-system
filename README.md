@@ -1,6 +1,6 @@
-# e-commerce-j
+# restaurant-management-system
 
-基于DDD（领域驱动设计）和Java技术栈的电商项目
+基于DDD（领域驱动设计）和Java技术栈的餐厅管理项目
 
 ## 项目结构
 
@@ -9,7 +9,7 @@
 ### 整体架构
 
 ```
-com.company.ecommerce
+com.restaurant.management
 ├── common/                    # 公共模块
 │   ├── domain/               # 领域基础（值对象、实体基类等）
 │   ├── infrastructure/       # 基础设施（配置、工具类等）
