@@ -1,33 +1,29 @@
 package com.restaurant.management.inventory.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.restaurant.management.common.domain.AggregateRoot;
 import com.restaurant.management.common.domain.BaseEntity;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * 库存聚合根
  */
-@Entity
-@Table(name = "inventories")
 @Getter
 @Setter
+@TableName("inventories")
 public class Inventory extends BaseEntity implements AggregateRoot {
     
-    @Column(name = "product_id", unique = true, nullable = false)
-    private Long productId;
+    private String productId;
     
-    @Column(name = "available_quantity", nullable = false)
     private Integer availableQuantity;
     
-    @Column(name = "reserved_quantity", nullable = false)
     private Integer reservedQuantity;
     
     /**
      * 创建库存
      */
-    public static Inventory create(Long productId, Integer initialQuantity) {
+    public static Inventory create(String productId, int initialQuantity) {
         Inventory inventory = new Inventory();
         inventory.productId = productId;
         inventory.availableQuantity = initialQuantity;

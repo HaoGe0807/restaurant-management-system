@@ -13,11 +13,10 @@ public class CreateProductCommand {
     private String productName;
     private String description;
     private BigDecimal price;
-    private Long categoryId;
     
     /**
      * 初始库存数量（创建商品时同时创建库存）
      */
-    private Integer initialQuantity;
+    private int initialQuantity;
 }
 

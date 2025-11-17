@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restaurant.management.inventory.infrastructure.mapper.InventoryMapper">
+    
+    <!--
+        预留复杂 SQL 示例：
+        <select id="selectInventoryWithLock" resultType="com.restaurant.management.inventory.domain.model.Inventory">
+            SELECT *
+            FROM inventories
+            WHERE product_id = #{productId}
+            FOR UPDATE
+        </select>
+    -->
+    
+</mapper>
+
+

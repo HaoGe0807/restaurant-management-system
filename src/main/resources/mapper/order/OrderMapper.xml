@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restaurant.management.order.infrastructure.mapper.OrderMapper">
+    
+    <!--
+        预留复杂 SQL 示例：
+        <select id="selectOrderDetail" resultType="com.restaurant.management.order.domain.model.Order">
+            SELECT o.*, u.name AS user_name
+            FROM orders o
+            LEFT JOIN users u ON o.user_id = u.id
+            WHERE o.order_no = #{orderNo}
+        </select>
+    -->
+    
+</mapper>
+
+

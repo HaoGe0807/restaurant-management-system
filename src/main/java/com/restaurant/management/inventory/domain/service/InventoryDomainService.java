@@ -19,7 +19,7 @@ public class InventoryDomainService {
      * 创建库存
      * 封装了库存创建的完整业务逻辑
      */
-    public Inventory createInventory(Long productId, Integer initialQuantity) {
+    public Inventory createInventory(String productId, int initialQuantity) {
         // 检查是否已存在该商品的库存
         if (inventoryRepository.findByProductId(productId).isPresent()) {
             throw new RuntimeException("该商品已存在库存记录");
@@ -35,7 +35,7 @@ public class InventoryDomainService {
     /**
      * 预留库存
      */
-    public Inventory reserveInventory(Long productId, Integer quantity) {
+    public Inventory reserveInventory(String productId, Integer quantity) {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
@@ -49,7 +49,7 @@ public class InventoryDomainService {
     /**
      * 释放预留库存
      */
-    public Inventory releaseReservedInventory(Long productId, Integer quantity) {
+    public Inventory releaseReservedInventory(String productId, Integer quantity) {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
@@ -60,7 +60,7 @@ public class InventoryDomainService {
     /**
      * 扣减库存
      */
-    public Inventory deductInventory(Long productId, Integer quantity) {
+    public Inventory deductInventory(String productId, Integer quantity) {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
@@ -71,7 +71,7 @@ public class InventoryDomainService {
     /**
      * 增加库存
      */
-    public Inventory increaseInventory(Long productId, Integer quantity) {
+    public Inventory increaseInventory(String productId, Integer quantity) {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
@@ -82,7 +82,7 @@ public class InventoryDomainService {
     /**
      * 根据商品ID查询库存
      */
-    public Inventory getInventoryByProductId(Long productId) {
+    public Inventory getInventoryByProductId(String productId) {
         return inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
     }

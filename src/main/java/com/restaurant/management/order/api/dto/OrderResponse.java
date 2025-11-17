@@ -22,7 +22,7 @@ public class OrderResponse {
     
     @Data
     public static class OrderItemResponse {
-        private Long productId;
+        private String productId;
         private String productName;
         private Integer quantity;
         private BigDecimal unitPrice;

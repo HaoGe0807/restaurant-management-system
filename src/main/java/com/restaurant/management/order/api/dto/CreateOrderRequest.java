@@ -22,7 +22,7 @@ public class CreateOrderRequest {
     @Data
     public static class OrderItemRequest {
         @NotNull(message = "商品ID不能为空")
-        private Long productId;
+        private String productId;
         
         @NotNull(message = "商品名称不能为空")
         private String productName;

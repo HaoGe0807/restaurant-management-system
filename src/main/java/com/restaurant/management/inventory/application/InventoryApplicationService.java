@@ -35,7 +35,7 @@ public class InventoryApplicationService {
     /**
      * 根据商品ID查询库存
      */
-    public Inventory getInventoryByProductId(Long productId) {
+    public Inventory getInventoryByProductId(String productId) {
         return inventoryDomainService.getInventoryByProductId(productId);
     }
 }

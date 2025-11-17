@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restaurant.management.order.infrastructure.mapper.OrderItemMapper">
+    
+    <!--
+        预留复杂 SQL 示例：
+        <select id="selectItemsByOrderNo" resultType="com.restaurant.management.order.domain.model.OrderItem">
+            SELECT i.*
+            FROM order_items i
+            INNER JOIN orders o ON i.order_id = o.id
+            WHERE o.order_no = #{orderNo}
+        </select>
+    -->
+    
+</mapper>
+
+

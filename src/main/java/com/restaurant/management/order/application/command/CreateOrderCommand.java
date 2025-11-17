@@ -17,7 +17,7 @@ public class CreateOrderCommand {
     
     @Data
     public static class OrderItemCommand {
-        private Long productId;
+        private String productId;
         private String productName;
         private Integer quantity;
         private BigDecimal unitPrice;

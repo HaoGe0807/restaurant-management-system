@@ -38,39 +38,23 @@ public class ProductApplicationService {
      */
     @Transactional
     public Product createProduct(CreateProductCommand command) {
-        // 1. 创建商品（调用商品领域服务）
-        Product product;
-        if (command.getInitialQuantity() != null && command.getInitialQuantity() > 0) {
-            // 带初始库存，会发布领域事件
-            product = productDomainService.createProductWithInventory(
-                    command.getProductName(),
-                    command.getDescription(),
-                    command.getPrice(),
-                    command.getCategoryId(),
-                    command.getInitialQuantity()
-            );
-        } else {
-            // 不带初始库存
-            product = productDomainService.createProduct(
-                    command.getProductName(),
-                    command.getDescription(),
-                    command.getPrice(),
-                    command.getCategoryId()
-            );
-        }
+        Product product = productDomainService.createProductWithInventory(
+                command.getProductName(),
+                command.getDescription(),
+                command.getPrice(),
+                command.getInitialQuantity()
+        );
         
-        // 2. 发布领域事件（在事务提交后异步处理）
         domainEventPublisher.publishAll(product.getDomainEvents());
         product.clearDomainEvents();
-        
         return product;
     }
     
     /**
      * 根据ID查询商品
      */
-    public Product getProduct(Long id) {
-        return productDomainService.getProduct(id);
+    public Product getProduct(String productId) {
+        return productDomainService.getProduct(productId);
     }
 }
 

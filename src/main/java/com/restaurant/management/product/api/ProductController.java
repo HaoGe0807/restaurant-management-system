@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
-    
+
     private final ProductApplicationService productApplicationService;
     
     /**
@@ -32,9 +32,9 @@ public class ProductController {
     /**
      * 根据ID查询商品
      */
-    @GetMapping("/{id}")
-    public ProductResponse getProduct(@PathVariable Long id) {
-        Product product = productApplicationService.getProduct(id);
+    @GetMapping("/{productId}")
+    public ProductResponse getProduct(@PathVariable String productId) {
+        Product product = productApplicationService.getProduct(productId);
         return convertToResponse(product);
     }
     
@@ -43,18 +43,17 @@ public class ProductController {
         command.setProductName(request.getProductName());
         command.setDescription(request.getDescription());
         command.setPrice(request.getPrice());
-        command.setCategoryId(request.getCategoryId());
+        command.setInitialQuantity(request.getInitialQuantity());
         return command;
     }
     
     private ProductResponse convertToResponse(Product product) {
         ProductResponse response = new ProductResponse();
-        response.setId(product.getId());
+        response.setProductId(product.getProductId());
         response.setProductName(product.getProductName());
         response.setDescription(product.getDescription());
         response.setPrice(product.getPrice());
         response.setStatus(product.getStatus().name());
-        response.setCategoryId(product.getCategoryId());
         response.setCreateTime(product.getCreateTime());
         return response;
     }

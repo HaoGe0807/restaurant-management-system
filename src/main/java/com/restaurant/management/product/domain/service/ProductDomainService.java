@@ -22,9 +22,9 @@ public class ProductDomainService {
      * 封装了商品创建的完整业务逻辑
      */
     public Product createProduct(String productName, String description, 
-                                 BigDecimal price, Long categoryId) {
+                                 BigDecimal price) {
         // 创建商品聚合（领域模型）
-        Product product = Product.create(productName, description, price, categoryId);
+        Product product = Product.create(productName, description, price);
         
         // 持久化商品（由领域服务决定如何保存）
         return productRepository.save(product);
@@ -34,11 +34,11 @@ public class ProductDomainService {
      * 创建商品（带初始库存）
      * 封装了商品创建的完整业务逻辑，并发布领域事件
      */
-    public Product createProductWithInventory(String productName, String description, 
-                                              BigDecimal price, Long categoryId, 
-                                              Integer initialQuantity) {
+    public Product createProductWithInventory(String productName, String description,
+                                              BigDecimal price,
+                                              int initialQuantity) {
         // 创建商品聚合（领域模型）
-        Product product = Product.create(productName, description, price, categoryId, initialQuantity);
+        Product product = Product.create(productName, description, price);
         
         // 持久化商品（由领域服务决定如何保存）
         product = productRepository.save(product);
@@ -52,8 +52,8 @@ public class ProductDomainService {
     /**
      * 更新商品价格
      */
-    public Product updatePrice(Long productId, BigDecimal newPrice) {
-        Product product = productRepository.findById(productId)
+    public Product updatePrice(String productId, BigDecimal newPrice) {
+        Product product = productRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("商品不存在"));
         
         // 调用聚合根的业务方法
@@ -66,8 +66,8 @@ public class ProductDomainService {
     /**
      * 下架商品
      */
-    public Product deactivateProduct(Long productId) {
-        Product product = productRepository.findById(productId)
+    public Product deactivateProduct(String productId) {
+        Product product = productRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("商品不存在"));
         
         product.deactivate();
@@ -77,8 +77,8 @@ public class ProductDomainService {
     /**
      * 上架商品
      */
-    public Product activateProduct(Long productId) {
-        Product product = productRepository.findById(productId)
+    public Product activateProduct(String productId) {
+        Product product = productRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("商品不存在"));
         
         product.activate();
@@ -88,8 +88,8 @@ public class ProductDomainService {
     /**
      * 根据ID查询商品
      */
-    public Product getProduct(Long productId) {
-        return productRepository.findById(productId)
+    public Product getProduct(String productId) {
+        return productRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("商品不存在"));
     }
 }

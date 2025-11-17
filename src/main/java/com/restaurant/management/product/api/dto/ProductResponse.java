@@ -11,12 +11,11 @@ import java.time.LocalDateTime;
 @Data
 public class ProductResponse {
     
-    private Long id;
+    private String productId;
     private String productName;
     private String description;
     private BigDecimal price;
     private String status;
-    private Long categoryId;
     private LocalDateTime createTime;
 }
 

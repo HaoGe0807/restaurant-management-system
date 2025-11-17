@@ -15,10 +15,16 @@ public interface ProductRepository {
     Product save(Product product);
     
     /**
-     * 根据ID查询
+     * 根据数据库ID查询
      */
     Optional<Product> findById(Long id);
-    
+
+    /**
+     * 根据业务ID查询
+     */
+    Optional<Product> findByProductId(String productId);
+
+
     /**
      * 根据商品名称查询
      */

@@ -17,7 +17,7 @@ public interface InventoryRepository {
     /**
      * 根据商品ID查询
      */
-    Optional<Inventory> findByProductId(Long productId);
+    Optional<Inventory> findByProductId(String productId);
     
     /**
      * 根据ID查询

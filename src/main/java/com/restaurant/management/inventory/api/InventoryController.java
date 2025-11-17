@@ -33,7 +33,7 @@ public class InventoryController {
      * 根据商品ID查询库存
      */
     @GetMapping("/product/{productId}")
-    public InventoryResponse getInventoryByProductId(@PathVariable Long productId) {
+    public InventoryResponse getInventoryByProductId(@PathVariable String productId) {
         Inventory inventory = inventoryApplicationService.getInventoryByProductId(productId);
         return convertToResponse(inventory);
     }

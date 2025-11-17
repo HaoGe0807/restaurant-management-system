@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restaurant.management.product.infrastructure.mapper.ProductMapper">
+    
+    <!--
+        预留复杂 SQL 示例：
+        <select id="queryProductWithStats" resultType="com.restaurant.management.product.domain.model.Product">
+            SELECT p.*, s.xxx
+            FROM products p
+            LEFT JOIN product_stats s ON p.id = s.product_id
+            WHERE ...
+        </select>
+    -->
+
+
+    <select id="findById" resultType="com.restaurant.management.product.domain.model.Product"></select>
+</mapper>
+
+

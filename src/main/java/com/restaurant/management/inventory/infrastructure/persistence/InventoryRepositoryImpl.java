@@ -1,34 +1,43 @@
 package com.restaurant.management.inventory.infrastructure.persistence;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.restaurant.management.inventory.domain.model.Inventory;
 import com.restaurant.management.inventory.domain.repository.InventoryRepository;
+import com.restaurant.management.inventory.infrastructure.mapper.InventoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 /**
- * 库存仓储实现（基础设施层）
+ * 库存仓储实现（MyBatis-Plus）
  */
 @Repository
 @RequiredArgsConstructor
 public class InventoryRepositoryImpl implements InventoryRepository {
     
-    private final InventoryJpaRepository jpaRepository;
+    private final InventoryMapper inventoryMapper;
     
     @Override
     public Inventory save(Inventory inventory) {
-        return jpaRepository.save(inventory);
+        if (inventory.getId() == null) {
+            inventoryMapper.insert(inventory);
+        } else {
+            inventoryMapper.updateById(inventory);
+        }
+        return inventory;
     }
     
     @Override
-    public Optional<Inventory> findByProductId(Long productId) {
-        return jpaRepository.findByProductId(productId);
+    public Optional<Inventory> findByProductId(String productId) {
+        return Optional.ofNullable(inventoryMapper.selectOne(
+                new LambdaQueryWrapper<Inventory>().eq(Inventory::getProductId, productId)
+        ));
     }
     
     @Override
     public Optional<Inventory> findById(Long id) {
-        return jpaRepository.findById(id);
+        return Optional.ofNullable(inventoryMapper.selectById(id));
     }
 }
 

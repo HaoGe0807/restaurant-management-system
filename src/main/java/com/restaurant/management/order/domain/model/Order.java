@@ -1,8 +1,9 @@
 package com.restaurant.management.order.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.restaurant.management.common.domain.AggregateRoot;
 import com.restaurant.management.common.domain.BaseEntity;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,26 +14,20 @@ import java.util.List;
 /**
  * 订单聚合根
  */
-@Entity
-@Table(name = "orders")
 @Getter
 @Setter
+@TableName("orders")
 public class Order extends BaseEntity implements AggregateRoot {
     
-    @Column(name = "order_no", unique = true, nullable = false)
     private String orderNo;
     
-    @Column(name = "user_id", nullable = false)
     private Long userId;
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
     private OrderStatus status;
     
-    @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
     
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @TableField(exist = false)
     private List<OrderItem> items = new ArrayList<>();
     
     /**
@@ -44,6 +39,9 @@ public class Order extends BaseEntity implements AggregateRoot {
         order.userId = userId;
         order.status = OrderStatus.CREATED;
         order.items = items;
+        if (order.items != null) {
+            order.items.forEach(item -> item.setOrder(order));
+        }
         order.calculateTotalAmount();
         return order;
     }
@@ -52,6 +50,10 @@ public class Order extends BaseEntity implements AggregateRoot {
      * 计算总金额
      */
     private void calculateTotalAmount() {
+        if (items == null || items.isEmpty()) {
+            this.totalAmount = BigDecimal.ZERO;
+            return;
+        }
         this.totalAmount = items.stream()
                 .map(OrderItem::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

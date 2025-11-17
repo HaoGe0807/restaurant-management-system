@@ -13,9 +13,9 @@ public class ProductCreatedEvent extends DomainEvent {
     
     private final Long productId;
     private final String productName;
-    private final Integer initialQuantity;  // 初始库存数量
+    private final int initialQuantity;  // 初始库存数量
     
-    public ProductCreatedEvent(Long productId, String productName, Integer initialQuantity) {
+    public ProductCreatedEvent(Long productId, String productName, int initialQuantity) {
         super();
         this.productId = productId;
         this.productName = productName;

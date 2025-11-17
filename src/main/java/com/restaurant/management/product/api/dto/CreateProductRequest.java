@@ -22,6 +22,9 @@ public class CreateProductRequest {
     @Positive(message = "价格必须大于0")
     private BigDecimal price;
     
-    private Long categoryId;
+    /**
+     * 初始库存数量（可选，默认0）
+     */
+    private int initialQuantity;
 }
 

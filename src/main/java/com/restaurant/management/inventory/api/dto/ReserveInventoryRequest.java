@@ -11,7 +11,7 @@ import lombok.Data;
 public class ReserveInventoryRequest {
     
     @NotNull(message = "商品ID不能为空")
-    private Long productId;
+    private String productId;
     
     @NotNull(message = "数量不能为空")
     @Positive(message = "数量必须大于0")

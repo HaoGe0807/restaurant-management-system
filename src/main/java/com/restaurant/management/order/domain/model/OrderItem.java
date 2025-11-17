@@ -1,7 +1,9 @@
 package com.restaurant.management.order.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restaurant.management.common.domain.BaseEntity;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,35 +12,31 @@ import java.math.BigDecimal;
 /**
  * 订单项实体
  */
-@Entity
-@Table(name = "order_items")
 @Getter
 @Setter
+@TableName("order_items")
 public class OrderItem extends BaseEntity {
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    private Long orderId;
     
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    private String productId;
     
-    @Column(name = "product_name", nullable = false)
     private String productName;
     
-    @Column(name = "quantity", nullable = false)
     private Integer quantity;
     
-    @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
     
-    @Column(name = "sub_total", nullable = false)
     private BigDecimal subTotal;
+    
+    @TableField(exist = false)
+    @JsonIgnore
+    private Order order; // 保持领域模型引用，不参与持久化
     
     /**
      * 创建订单项
      */
-    public static OrderItem create(Long productId, String productName, 
+    public static OrderItem create(String productId, String productName, 
                                    Integer quantity, BigDecimal unitPrice) {
         OrderItem item = new OrderItem();
         item.productId = productId;
