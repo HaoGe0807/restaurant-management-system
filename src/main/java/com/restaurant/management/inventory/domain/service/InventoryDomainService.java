@@ -19,14 +19,14 @@ public class InventoryDomainService {
      * 创建库存
      * 封装了库存创建的完整业务逻辑
      */
-    public Inventory createInventory(String productId, int initialQuantity) {
+    public Inventory createInventory(String skuId, int initialQuantity) {
         // 检查是否已存在该商品的库存
-        if (inventoryRepository.findByProductId(productId).isPresent()) {
-            throw new RuntimeException("该商品已存在库存记录");
+        if (inventoryRepository.findBySkuId(skuId).isPresent()) {
+            throw new RuntimeException("该 SKU 已存在库存记录");
         }
         
         // 创建库存聚合（领域模型）
-        Inventory inventory = Inventory.create(productId, initialQuantity);
+        Inventory inventory = Inventory.create(skuId, initialQuantity);
         
         // 持久化库存（由领域服务决定如何保存）
         return inventoryRepository.save(inventory);
@@ -35,8 +35,8 @@ public class InventoryDomainService {
     /**
      * 预留库存
      */
-    public Inventory reserveInventory(String productId, Integer quantity) {
-        Inventory inventory = inventoryRepository.findByProductId(productId)
+    public Inventory reserveInventory(String skuId, Integer quantity) {
+        Inventory inventory = inventoryRepository.findBySkuId(skuId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
         // 调用聚合根的业务方法
@@ -49,8 +49,8 @@ public class InventoryDomainService {
     /**
      * 释放预留库存
      */
-    public Inventory releaseReservedInventory(String productId, Integer quantity) {
-        Inventory inventory = inventoryRepository.findByProductId(productId)
+    public Inventory releaseReservedInventory(String skuId, Integer quantity) {
+        Inventory inventory = inventoryRepository.findBySkuId(skuId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
         inventory.releaseReserved(quantity);
@@ -60,8 +60,8 @@ public class InventoryDomainService {
     /**
      * 扣减库存
      */
-    public Inventory deductInventory(String productId, Integer quantity) {
-        Inventory inventory = inventoryRepository.findByProductId(productId)
+    public Inventory deductInventory(String skuId, Integer quantity) {
+        Inventory inventory = inventoryRepository.findBySkuId(skuId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
         inventory.deduct(quantity);
@@ -71,8 +71,8 @@ public class InventoryDomainService {
     /**
      * 增加库存
      */
-    public Inventory increaseInventory(String productId, Integer quantity) {
-        Inventory inventory = inventoryRepository.findByProductId(productId)
+    public Inventory increaseInventory(String skuId, Integer quantity) {
+        Inventory inventory = inventoryRepository.findBySkuId(skuId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
         
         inventory.increase(quantity);
@@ -82,8 +82,8 @@ public class InventoryDomainService {
     /**
      * 根据商品ID查询库存
      */
-    public Inventory getInventoryByProductId(String productId) {
-        return inventoryRepository.findByProductId(productId)
+    public Inventory getInventoryBySkuId(String skuId) {
+        return inventoryRepository.findBySkuId(skuId)
                 .orElseThrow(() -> new RuntimeException("库存不存在"));
     }
 }

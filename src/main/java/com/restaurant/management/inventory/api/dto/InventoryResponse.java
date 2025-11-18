@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class InventoryResponse {
     
     private Long id;
-    private String productId;
+    private String skuId;
     private Integer availableQuantity;
     private Integer reservedQuantity;
     private Integer totalQuantity;

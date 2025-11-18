@@ -35,8 +35,8 @@ public class OrderController {
         command.setItems(request.getItems().stream()
                 .map(item -> {
                     CreateOrderCommand.OrderItemCommand cmd = new CreateOrderCommand.OrderItemCommand();
-                    cmd.setProductId(item.getProductId());
-                    cmd.setProductName(item.getProductName());
+                    cmd.setSkuId(item.getSkuId());
+                    cmd.setSkuName(item.getSkuName());
                     cmd.setQuantity(item.getQuantity());
                     cmd.setUnitPrice(item.getUnitPrice());
                     return cmd;
@@ -55,8 +55,8 @@ public class OrderController {
         response.setItems(order.getItems().stream()
                 .map(item -> {
                     OrderResponse.OrderItemResponse itemResp = new OrderResponse.OrderItemResponse();
-                    itemResp.setProductId(item.getProductId());
-                    itemResp.setProductName(item.getProductName());
+                    itemResp.setSkuId(item.getSkuId());
+                    itemResp.setSkuName(item.getSkuName());
                     itemResp.setQuantity(item.getQuantity());
                     itemResp.setUnitPrice(item.getUnitPrice());
                     itemResp.setSubTotal(item.getSubTotal());

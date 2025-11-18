@@ -15,9 +15,9 @@ public interface InventoryRepository {
     Inventory save(Inventory inventory);
     
     /**
-     * 根据商品ID查询
+     * 根据 SKU ID 查询
      */
-    Optional<Inventory> findByProductId(String productId);
+    Optional<Inventory> findBySkuId(String skuId);
     
     /**
      * 根据ID查询

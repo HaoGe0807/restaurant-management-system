@@ -22,8 +22,8 @@ public class OrderResponse {
     
     @Data
     public static class OrderItemResponse {
-        private String productId;
-        private String productName;
+        private String skuId;
+        private String skuName;
         private Integer quantity;
         private BigDecimal unitPrice;
         private BigDecimal subTotal;

@@ -4,16 +4,11 @@
     
     <!--
         预留复杂 SQL 示例：
-        <select id="queryProductWithStats" resultType="com.restaurant.management.product.domain.model.Product">
-            SELECT p.*, s.xxx
-            FROM products p
-            LEFT JOIN product_stats s ON p.id = s.product_id
-            WHERE ...
+        <select id="querySpuWithAggregation" resultType="com.restaurant.management.product.domain.model.ProductSpu">
+            SELECT *
+            FROM product_spu
+            WHERE spu_id = #{spuId}
         </select>
     -->
 
-
-    <select id="findById" resultType="com.restaurant.management.product.domain.model.Product"></select>
 </mapper>
-
-

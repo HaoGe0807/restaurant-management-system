@@ -32,18 +32,19 @@ public class ProductCreatedEventHandler {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(ProductCreatedEvent event) {
         try {
-            log.info("收到商品创建事件，商品ID: {}, 商品名称: {}, 初始库存: {}", 
-                    event.getProductId(), event.getProductName(), event.getInitialQuantity());
+            log.info("收到商品创建事件，SPU: {}, SKU数量: {}", event.getSpuId(), event.getSkus().size());
+
+            event.getSkus().forEach(skuSnapshot -> {
+                log.info("创建库存，SKU: {}, 初始库存: {}", skuSnapshot.getSkuId(), skuSnapshot.getInitialQuantity());
+                inventoryDomainService.createInventory(
+                        skuSnapshot.getSkuId(),
+                        skuSnapshot.getInitialQuantity()
+                );
+            });
             
-            // 创建库存（最终一致性，异步处理）
-            inventoryDomainService.createInventory(
-                    event.getProductId(),
-                    event.getInitialQuantity()
-            );
-            
-            log.info("库存创建成功，商品ID: {}", event.getProductId());
+            log.info("库存创建成功，SPU: {}", event.getSpuId());
         } catch (Exception e) {
-            log.error("处理商品创建事件失败，商品ID: {}", event.getProductId(), e);
+            log.error("处理商品创建事件失败，SPU: {}", event.getSpuId(), e);
             // 可以在这里实现重试机制或补偿逻辑
             throw e;
         }

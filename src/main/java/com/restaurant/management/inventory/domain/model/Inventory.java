@@ -1,5 +1,6 @@
 package com.restaurant.management.inventory.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.restaurant.management.common.domain.AggregateRoot;
 import com.restaurant.management.common.domain.BaseEntity;
@@ -14,7 +15,8 @@ import lombok.Setter;
 @TableName("inventories")
 public class Inventory extends BaseEntity implements AggregateRoot {
     
-    private String productId;
+    @TableField("sku_id")
+    private String skuId;
     
     private Integer availableQuantity;
     
@@ -23,9 +25,9 @@ public class Inventory extends BaseEntity implements AggregateRoot {
     /**
      * 创建库存
      */
-    public static Inventory create(String productId, int initialQuantity) {
+    public static Inventory create(String skuId, int initialQuantity) {
         Inventory inventory = new Inventory();
-        inventory.productId = productId;
+        inventory.skuId = skuId;
         inventory.availableQuantity = initialQuantity;
         inventory.reservedQuantity = 0;
         return inventory;

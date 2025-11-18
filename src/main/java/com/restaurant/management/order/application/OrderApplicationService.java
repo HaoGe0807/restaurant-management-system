@@ -7,14 +7,16 @@ import com.restaurant.management.order.application.command.CreateOrderCommand;
 import com.restaurant.management.order.domain.model.Order;
 import com.restaurant.management.order.domain.model.OrderItem;
 import com.restaurant.management.order.domain.service.OrderDomainService;
-import com.restaurant.management.product.domain.model.Product;
+import com.restaurant.management.product.domain.model.ProductSku;
 import com.restaurant.management.product.domain.model.ProductStatus;
 import com.restaurant.management.product.domain.service.ProductDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -50,19 +52,23 @@ public class OrderApplicationService {
     @Transactional
     public Order createOrder(CreateOrderCommand command) {
         // 1. 验证商品和库存（强一致性，必须同步验证）
-        validateProductsAndInventory(command);
+        Map<String, ProductSku> skuMap = validateProductsAndInventory(command);
         
         // 2. 预留库存（强一致性，必须同步预留）
         reserveInventory(command);
         
         // 3. 转换命令为领域对象（这是应用层的职责：适配外部输入）
         List<OrderItem> items = command.getItems().stream()
-                .map(item -> OrderItem.create(
-                        item.getProductId(),
-                        item.getProductName(),
-                        item.getQuantity(),
-                        item.getUnitPrice()
-                ))
+                .map(item -> {
+                    ProductSku sku = skuMap.get(item.getSkuId());
+                    return OrderItem.create(
+                            sku.getSpuId(),
+                            sku.getSkuId(),
+                            sku.getSkuName(),
+                            item.getQuantity(),
+                            sku.getPrice()
+                    );
+                })
                 .collect(Collectors.toList());
         
         // 4. 创建订单（调用领域服务）
@@ -73,33 +79,36 @@ public class OrderApplicationService {
      * 验证商品和库存
      * 强一致性：必须同步验证，确保数据一致性
      */
-    private void validateProductsAndInventory(CreateOrderCommand command) {
+    private Map<String, ProductSku> validateProductsAndInventory(CreateOrderCommand command) {
+        Map<String, ProductSku> skuCache = new HashMap<>();
         for (CreateOrderCommand.OrderItemCommand item : command.getItems()) {
             // 验证商品
-            Product product = productDomainService.getProduct(item.getProductId());
+            ProductSku productSku = skuCache.computeIfAbsent(item.getSkuId(),
+                    id -> productDomainService.getProductSku(id));
             
             // 验证商品状态
-            if (product.getStatus() != ProductStatus.ACTIVE) {
+            if (productSku.getStatus() != ProductStatus.ACTIVE) {
                 throw new DomainException("PRODUCT_INACTIVE", 
-                        "商品[" + product.getProductName() + "]已下架，无法下单");
+                        "SKU[" + productSku.getSkuName() + "]已下架，无法下单");
             }
             
             // 验证商品价格
-            if (!product.getPrice().equals(item.getUnitPrice())) {
+            if (productSku.getPrice().compareTo(item.getUnitPrice()) != 0) {
                 throw new DomainException("PRODUCT_PRICE_CHANGED", 
-                        "商品[" + product.getProductName() + "]价格已变更，请刷新后重试");
+                        "SKU[" + productSku.getSkuName() + "]价格已变更，请刷新后重试");
             }
             
             // 验证库存
-            Inventory inventory = inventoryDomainService.getInventoryByProductId(item.getProductId());
+            Inventory inventory = inventoryDomainService.getInventoryBySkuId(item.getSkuId());
             
             // 验证库存数量
             if (inventory.getAvailableQuantity() < item.getQuantity()) {
                 throw new DomainException("INVENTORY_INSUFFICIENT", 
-                        "商品[" + product.getProductName() + "]库存不足，当前可用库存：" + 
+                        "SKU[" + productSku.getSkuName() + "]库存不足，当前可用库存：" + 
                         inventory.getAvailableQuantity());
             }
         }
+        return skuCache;
     }
     
     /**
@@ -109,7 +118,7 @@ public class OrderApplicationService {
     private void reserveInventory(CreateOrderCommand command) {
         for (CreateOrderCommand.OrderItemCommand item : command.getItems()) {
             // 预留库存（强一致性，同步操作）
-            inventoryDomainService.reserveInventory(item.getProductId(), item.getQuantity());
+            inventoryDomainService.reserveInventory(item.getSkuId(), item.getQuantity());
         }
     }
     

@@ -1,96 +1,48 @@
 package com.restaurant.management.product.domain.service;
 
-import com.restaurant.management.product.domain.model.Product;
+import com.restaurant.management.product.domain.model.ProductSku;
+import com.restaurant.management.product.domain.model.ProductSpu;
 import com.restaurant.management.product.domain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 商品领域服务
- * 封装商品相关的业务逻辑，包括持久化操作
  */
 @Service
 @RequiredArgsConstructor
 public class ProductDomainService {
-    
+
     private final ProductRepository productRepository;
-    
+
     /**
-     * 创建商品
-     * 封装了商品创建的完整业务逻辑
+     * 创建 SPU 及其 SKU，并发布领域事件
      */
-    public Product createProduct(String productName, String description, 
-                                 BigDecimal price) {
-        // 创建商品聚合（领域模型）
-        Product product = Product.create(productName, description, price);
-        
-        // 持久化商品（由领域服务决定如何保存）
-        return productRepository.save(product);
+    public ProductSpu createProductWithSkus(String spuName, String description, List<ProductSku> skus) {
+        if (skus == null || skus.isEmpty()) {
+            throw new IllegalArgumentException("至少需要一个 SKU");
+        }
+
+        ProductSpu spu = ProductSpu.create(spuName, description);
+        skus.forEach(spu::addSku);
+
+        spu = productRepository.save(spu);
+
+        spu.publishProductCreatedEvent();
+
+        return spu;
     }
-    
-    /**
-     * 创建商品（带初始库存）
-     * 封装了商品创建的完整业务逻辑，并发布领域事件
-     */
-    public Product createProductWithInventory(String productName, String description,
-                                              BigDecimal price,
-                                              int initialQuantity) {
-        // 创建商品聚合（领域模型）
-        Product product = Product.create(productName, description, price);
-        
-        // 持久化商品（由领域服务决定如何保存）
-        product = productRepository.save(product);
-        
-        // 保存后发布领域事件（此时ID已生成）
-        product.publishProductCreatedEvent(initialQuantity);
-        
-        return product;
-    }
-    
-    /**
-     * 更新商品价格
-     */
-    public Product updatePrice(String productId, BigDecimal newPrice) {
-        Product product = productRepository.findByProductId(productId)
+
+    public ProductSpu getProductSpu(String spuId) {
+        return productRepository.findBySpuId(spuId)
                 .orElseThrow(() -> new RuntimeException("商品不存在"));
-        
-        // 调用聚合根的业务方法
-        product.updatePrice(newPrice);
-        
-        // 持久化状态变更
-        return productRepository.save(product);
     }
-    
-    /**
-     * 下架商品
-     */
-    public Product deactivateProduct(String productId) {
-        Product product = productRepository.findByProductId(productId)
-                .orElseThrow(() -> new RuntimeException("商品不存在"));
-        
-        product.deactivate();
-        return productRepository.save(product);
-    }
-    
-    /**
-     * 上架商品
-     */
-    public Product activateProduct(String productId) {
-        Product product = productRepository.findByProductId(productId)
-                .orElseThrow(() -> new RuntimeException("商品不存在"));
-        
-        product.activate();
-        return productRepository.save(product);
-    }
-    
-    /**
-     * 根据ID查询商品
-     */
-    public Product getProduct(String productId) {
-        return productRepository.findByProductId(productId)
-                .orElseThrow(() -> new RuntimeException("商品不存在"));
+
+    public ProductSku getProductSku(String skuId) {
+        return productRepository.findSkuBySkuId(skuId)
+                .orElseThrow(() -> new RuntimeException("SKU不存在"));
     }
 }
 

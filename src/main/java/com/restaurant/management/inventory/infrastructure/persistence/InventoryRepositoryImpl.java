@@ -29,9 +29,9 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     }
     
     @Override
-    public Optional<Inventory> findByProductId(String productId) {
+    public Optional<Inventory> findBySkuId(String skuId) {
         return Optional.ofNullable(inventoryMapper.selectOne(
-                new LambdaQueryWrapper<Inventory>().eq(Inventory::getProductId, productId)
+                new LambdaQueryWrapper<Inventory>().eq(Inventory::getSkuId, skuId)
         ));
     }
     

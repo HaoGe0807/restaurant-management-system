@@ -1,33 +1,22 @@
 package com.restaurant.management.product.domain.repository;
 
-import com.restaurant.management.product.domain.model.Product;
+import com.restaurant.management.product.domain.model.ProductSku;
+import com.restaurant.management.product.domain.model.ProductSpu;
 
 import java.util.Optional;
 
 /**
- * 商品仓储接口（领域层定义）
+ * 商品仓储接口（SPU 聚合）
  */
 public interface ProductRepository {
-    
-    /**
-     * 保存商品
-     */
-    Product save(Product product);
-    
-    /**
-     * 根据数据库ID查询
-     */
-    Optional<Product> findById(Long id);
 
-    /**
-     * 根据业务ID查询
-     */
-    Optional<Product> findByProductId(String productId);
+    ProductSpu save(ProductSpu productSpu);
 
+    Optional<ProductSpu> findBySpuId(String spuId);
 
-    /**
-     * 根据商品名称查询
-     */
-    Optional<Product> findByProductName(String productName);
+    Optional<ProductSpu> findBySpuName(String spuName);
+
+    Optional<ProductSku> findSkuBySkuId(String skuId);
+
+    Optional<ProductSku> findSkuBySpuIdAndName(String spuId, String skuName);
 }
-

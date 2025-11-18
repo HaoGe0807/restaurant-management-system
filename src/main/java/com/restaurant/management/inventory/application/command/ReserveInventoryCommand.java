@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class ReserveInventoryCommand {
     
-    private String productId;
+    private String skuId;
     private Integer quantity;
 }
 

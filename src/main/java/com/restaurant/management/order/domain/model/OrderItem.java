@@ -19,9 +19,14 @@ public class OrderItem extends BaseEntity {
     
     private Long orderId;
     
-    private String productId;
+    @TableField("spu_id")
+    private String spuId;
     
-    private String productName;
+    @TableField("sku_id")
+    private String skuId;
+    
+    @TableField("sku_name")
+    private String skuName;
     
     private Integer quantity;
     
@@ -36,11 +41,12 @@ public class OrderItem extends BaseEntity {
     /**
      * 创建订单项
      */
-    public static OrderItem create(String productId, String productName, 
+    public static OrderItem create(String spuId, String skuId, String skuName,
                                    Integer quantity, BigDecimal unitPrice) {
         OrderItem item = new OrderItem();
-        item.productId = productId;
-        item.productName = productName;
+        item.spuId = spuId;
+        item.skuId = skuId;
+        item.skuName = skuName;
         item.quantity = quantity;
         item.unitPrice = unitPrice;
         item.subTotal = unitPrice.multiply(BigDecimal.valueOf(quantity));

@@ -21,11 +21,11 @@ public class CreateOrderRequest {
     
     @Data
     public static class OrderItemRequest {
-        @NotNull(message = "商品ID不能为空")
-        private String productId;
+        @NotNull(message = "SKU ID不能为空")
+        private String skuId;
         
-        @NotNull(message = "商品名称不能为空")
-        private String productName;
+        @NotNull(message = "SKU名称不能为空")
+        private String skuName;
         
         @NotNull(message = "数量不能为空")
         private Integer quantity;

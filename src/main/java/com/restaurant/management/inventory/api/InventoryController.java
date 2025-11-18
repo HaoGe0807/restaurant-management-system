@@ -30,17 +30,17 @@ public class InventoryController {
     }
     
     /**
-     * 根据商品ID查询库存
+     * 根据 SKU 查询库存
      */
-    @GetMapping("/product/{productId}")
-    public InventoryResponse getInventoryByProductId(@PathVariable String productId) {
-        Inventory inventory = inventoryApplicationService.getInventoryByProductId(productId);
+    @GetMapping("/sku/{skuId}")
+    public InventoryResponse getInventoryBySkuId(@PathVariable String skuId) {
+        Inventory inventory = inventoryApplicationService.getInventoryBySkuId(skuId);
         return convertToResponse(inventory);
     }
     
     private ReserveInventoryCommand convertToCommand(ReserveInventoryRequest request) {
         ReserveInventoryCommand command = new ReserveInventoryCommand();
-        command.setProductId(request.getProductId());
+        command.setSkuId(request.getSkuId());
         command.setQuantity(request.getQuantity());
         return command;
     }
@@ -48,7 +48,7 @@ public class InventoryController {
     private InventoryResponse convertToResponse(Inventory inventory) {
         InventoryResponse response = new InventoryResponse();
         response.setId(inventory.getId());
-        response.setProductId(inventory.getProductId());
+        response.setSkuId(inventory.getSkuId());
         response.setAvailableQuantity(inventory.getAvailableQuantity());
         response.setReservedQuantity(inventory.getReservedQuantity());
         response.setTotalQuantity(inventory.getTotalQuantity());

@@ -27,7 +27,7 @@ public class InventoryApplicationService {
     public Inventory reserveInventory(ReserveInventoryCommand command) {
         // 调用领域服务，由领域层处理业务逻辑和持久化
         return inventoryDomainService.reserveInventory(
-                command.getProductId(),
+                command.getSkuId(),
                 command.getQuantity()
         );
     }
@@ -35,8 +35,8 @@ public class InventoryApplicationService {
     /**
      * 根据商品ID查询库存
      */
-    public Inventory getInventoryByProductId(String productId) {
-        return inventoryDomainService.getInventoryByProductId(productId);
+    public Inventory getInventoryBySkuId(String skuId) {
+        return inventoryDomainService.getInventoryBySkuId(skuId);
     }
 }
 
