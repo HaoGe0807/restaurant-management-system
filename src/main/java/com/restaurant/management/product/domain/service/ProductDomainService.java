@@ -20,7 +20,7 @@ public class ProductDomainService {
     /**
      * 创建 SPU 及其 SKU，并发布领域事件
      */
-    public ProductSpu createProductWithSkus(String spuName, String description, List<ProductSku> skus) {
+    public ProductSpu createProduct(String spuName, String description, List<ProductSku> skus) {
         if (skus == null || skus.isEmpty()) {
             throw new IllegalArgumentException("至少需要一个 SKU");
         }

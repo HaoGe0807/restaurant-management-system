@@ -5,7 +5,6 @@ import com.restaurant.management.common.domain.DomainEvent;
 import com.restaurant.management.common.domain.DomainEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SpringDomainEventPublisher implements DomainEventPublisher {
     
-    private final ApplicationEventPublisher applicationEventPublisher;
     private final DomainEventMapper domainEventMapper;
     private final ObjectMapper objectMapper;
     
@@ -42,7 +40,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
             DomainEventEntity eventEntity = new DomainEventEntity();
             eventEntity.setEventType(event.getClass().getName());
             eventEntity.setEventData(objectMapper.writeValueAsString(event));
-            eventEntity.setStatus("PENDING");
+            eventEntity.setStatus(DomainEventStatus.PENDING.name());
             eventEntity.setRetryCount(0);
             
             // 如果事件包含聚合根信息，可以设置
@@ -53,11 +51,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
             }
             
             domainEventMapper.insert(eventEntity);
-            log.debug("领域事件已保存到数据库，事件类型: {}, ID: {}", event.getClass().getSimpleName(), eventEntity.getId());
-            
-            // 2. 立即发布（简化版，实际应该由定时任务在事务提交后发布）
-            // 这里使用 @TransactionalEventListener 确保在事务提交后才真正发布
-            applicationEventPublisher.publishEvent(event);
+            log.debug("领域事件已保存到发件箱，事件类型: {}, ID: {}", event.getClass().getSimpleName(), eventEntity.getId());
             
         } catch (Exception e) {
             log.error("保存领域事件失败", e);

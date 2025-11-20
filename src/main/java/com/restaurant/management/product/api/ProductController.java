@@ -90,7 +90,6 @@ public class ProductController {
         response.setSkuId(sku.getSkuId());
         response.setSkuName(sku.getSkuName());
         response.setPrice(sku.getPrice());
-        response.setAttributes(sku.getAttributes());
         return response;
     }
 }

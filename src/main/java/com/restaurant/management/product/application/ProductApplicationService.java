@@ -37,7 +37,7 @@ public class ProductApplicationService {
                 ))
                 .collect(Collectors.toList());
 
-        ProductSpu productSpu = productDomainService.createProductWithSkus(
+        ProductSpu productSpu = productDomainService.createProduct(
                 command.getSpuName(),
                 command.getDescription(),
                 skus

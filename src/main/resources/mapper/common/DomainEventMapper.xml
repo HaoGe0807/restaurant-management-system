@@ -9,6 +9,47 @@
         ORDER BY create_time ASC
         LIMIT #{limit}
     </select>
+
+    <!-- 标记处理中 -->
+    <update id="markProcessing">
+        UPDATE domain_events
+        SET status = 'PROCESSING',
+            retry_count = retry_count + 1,
+            error_message = NULL,
+            update_time = NOW()
+        WHERE id = #{id}
+          AND status = 'PENDING'
+    </update>
+
+    <!-- 标记发布成功 -->
+    <update id="markPublished">
+        UPDATE domain_events
+        SET status = 'PUBLISHED',
+            error_message = NULL,
+            update_time = NOW()
+        WHERE id = #{id}
+          AND status = 'PROCESSING'
+    </update>
+
+    <!-- 标记待重试 -->
+    <update id="markPending">
+        UPDATE domain_events
+        SET status = 'PENDING',
+            error_message = #{errorMessage},
+            update_time = NOW()
+        WHERE id = #{id}
+          AND status = 'PROCESSING'
+    </update>
+
+    <!-- 标记失败 -->
+    <update id="markFailed">
+        UPDATE domain_events
+        SET status = 'FAILED',
+            error_message = #{errorMessage},
+            update_time = NOW()
+        WHERE id = #{id}
+          AND status = 'PROCESSING'
+    </update>
     
 </mapper>
 

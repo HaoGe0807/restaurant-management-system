@@ -28,14 +28,6 @@ public class ProductSku extends BaseEntity {
 
     private BigDecimal price;
 
-    /**
-     * JSON 存储规格属性
-     */
-    @TableField("attributes")
-    private String attributes;
-
-    private ProductStatus status;
-
     @TableField(exist = false)
     private int initialQuantity;
 
@@ -44,18 +36,8 @@ public class ProductSku extends BaseEntity {
         sku.skuId = generateSkuId();
         sku.skuName = skuName;
         sku.price = price;
-        sku.attributes = attributes;
-        sku.status = ProductStatus.ACTIVE;
         sku.initialQuantity = Math.max(initialQuantity, 0);
         return sku;
-    }
-
-    public void deactivate() {
-        this.status = ProductStatus.INACTIVE;
-    }
-
-    public void activate() {
-        this.status = ProductStatus.ACTIVE;
     }
 
     private static String generateSkuId() {

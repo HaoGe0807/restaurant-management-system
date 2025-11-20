@@ -1,7 +1,5 @@
 package com.restaurant.management.common.infrastructure.event;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.restaurant.management.common.domain.BaseEntity;
 import lombok.Getter;
@@ -45,5 +43,10 @@ public class DomainEventEntity extends BaseEntity {
      * 关联的聚合根类型（可选）
      */
     private String aggregateType;
+
+    /**
+     * 最近一次错误信息
+     */
+    private String errorMessage;
 }
 

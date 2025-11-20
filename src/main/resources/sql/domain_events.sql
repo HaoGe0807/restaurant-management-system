@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `domain_events` (
     `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',
     `aggregate_id` VARCHAR(100) COMMENT '关联的聚合根ID',
     `aggregate_type` VARCHAR(100) COMMENT '关联的聚合根类型',
+    `error_message` VARCHAR(500) COMMENT '最近一次错误信息',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     INDEX `idx_status` (`status`),
