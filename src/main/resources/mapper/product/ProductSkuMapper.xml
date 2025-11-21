@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restaurant.management.product.infrastructure.mapper.ProductSkuMapper">
+
+    <insert id="upsertSkus">
+        INSERT INTO product_sku (sku_id, spu_id, sku_name, attributes, price, status)
+        VALUES
+        <foreach collection="skus" item="item" separator=",">
+            (#{item.skuId}, #{item.spuId}, #{item.skuName}, #{item.attributes}, #{item.price}, #{item.status})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            sku_name = VALUES(sku_name),
+            attributes = VALUES(attributes),
+            price = VALUES(price),
+            status = VALUES(status),
+            update_time = NOW()
+    </insert>
+
+</mapper>
+

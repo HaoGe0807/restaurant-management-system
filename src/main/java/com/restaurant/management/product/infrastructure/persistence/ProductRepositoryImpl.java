@@ -10,8 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 商品仓储实现（SPU + SKU）
@@ -28,17 +31,46 @@ public class ProductRepositoryImpl implements ProductRepository {
     public ProductSpu save(ProductSpu productSpu) {
         if (productSpu.getId() == null) {
             productMapper.insert(productSpu);
-        } else {
-            productMapper.updateById(productSpu);
-            productSkuMapper.delete(new LambdaQueryWrapper<ProductSku>()
-                    .eq(ProductSku::getSpuId, productSpu.getSpuId()));
+            upsertSkus(productSpu);
+            return productSpu;
         }
 
+        productMapper.updateById(productSpu);
+
+        List<ProductSku> existingSkus = productSkuMapper.selectList(
+                new LambdaQueryWrapper<ProductSku>().eq(ProductSku::getSpuId, productSpu.getSpuId()));
+
+        Set<String> incomingSkuIds = upsertSkus(productSpu);
+        deleteRemovedSkus(productSpu.getSpuId(), existingSkus, incomingSkuIds);
+        return productSpu;
+    }
+
+    private Set<String> upsertSkus(ProductSpu productSpu) {
+        if (productSpu.getSkus() == null || productSpu.getSkus().isEmpty()) {
+            return new HashSet<>();
+        }
         for (ProductSku sku : productSpu.getSkus()) {
             sku.setSpuId(productSpu.getSpuId());
-            productSkuMapper.insert(sku);
         }
-        return productSpu;
+        productSkuMapper.upsertSkus(productSpu.getSkus());
+        return productSpu.getSkus().stream()
+                .map(ProductSku::getSkuId)
+                .collect(Collectors.toSet());
+    }
+
+    private void deleteRemovedSkus(String spuId, List<ProductSku> existingSkus, Set<String> incomingSkuIds) {
+        if (existingSkus == null || existingSkus.isEmpty()) {
+            return;
+        }
+        List<String> toDelete = existingSkus.stream()
+                .map(ProductSku::getSkuId)
+                .filter(skuId -> !incomingSkuIds.contains(skuId))
+                .collect(Collectors.toList());
+        if (!toDelete.isEmpty()) {
+            productSkuMapper.delete(new LambdaQueryWrapper<ProductSku>()
+                    .eq(ProductSku::getSpuId, spuId)
+                    .in(ProductSku::getSkuId, toDelete));
+        }
     }
 
     @Override
