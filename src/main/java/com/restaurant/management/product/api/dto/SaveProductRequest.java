@@ -14,7 +14,9 @@ import java.util.List;
  * 创建商品请求DTO（SPU + SKU）
  */
 @Data
-public class CreateProductRequest {
+public class SaveProductRequest {
+
+    private String spuId;
 
     @NotBlank(message = "SPU名称不能为空")
     private String spuName;

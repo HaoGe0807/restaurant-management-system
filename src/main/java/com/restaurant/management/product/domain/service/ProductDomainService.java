@@ -44,5 +44,30 @@ public class ProductDomainService {
         return productRepository.findSkuBySkuId(skuId)
                 .orElseThrow(() -> new RuntimeException("SKU不存在"));
     }
+
+    /**
+     * 更新商品（SPU 及其 SKU）
+     */
+    public ProductSpu updateProduct(String spuId, String spuName, String description, List<ProductSku> skus) {
+        ProductSpu existingSpu = productRepository.findBySpuId(spuId)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+
+        // 更新 SPU 基本信息
+        existingSpu.setSpuName(spuName);
+        existingSpu.setDescription(description);
+
+        // 替换 SKU 列表
+        existingSpu.replaceSkus(skus);
+
+        // 保存更新
+        return productRepository.save(existingSpu);
+    }
+
+    /**
+     * 查询商品列表
+     */
+    public List<ProductSpu> getProductList(int pageNum, int pageSize) {
+        return productRepository.findAll(pageNum, pageSize);
+    }
 }
 

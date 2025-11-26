@@ -55,5 +55,34 @@ public class ProductApplicationService {
     public ProductSku getSku(String skuId) {
         return productDomainService.getProductSku(skuId);
     }
+
+    @Transactional
+    public ProductSpu updateProduct(String spuId, CreateProductCommand command) {
+        if (command.getSkus() == null || command.getSkus().isEmpty()) {
+            throw new IllegalArgumentException("至少需要一个SKU");
+        }
+
+        List<ProductSku> skus = command.getSkus().stream()
+                .map(skuCmd -> ProductSku.create(
+                        skuCmd.getSkuName(),
+                        skuCmd.getPrice(),
+                        skuCmd.getAttributes(),
+                        skuCmd.getInitialQuantity()
+                ))
+                .collect(Collectors.toList());
+
+        ProductSpu productSpu = productDomainService.updateProduct(
+                spuId,
+                command.getSpuName(),
+                command.getDescription(),
+                skus
+        );
+
+        return productSpu;
+    }
+
+    public List<ProductSpu> getProductList(int pageNum, int pageSize) {
+        return productDomainService.getProductList(pageNum, pageSize);
+    }
 }
 

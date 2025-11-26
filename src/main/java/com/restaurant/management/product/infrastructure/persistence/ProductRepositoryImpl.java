@@ -1,6 +1,7 @@
 package com.restaurant.management.product.infrastructure.persistence;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.restaurant.management.product.domain.model.ProductSku;
 import com.restaurant.management.product.domain.model.ProductSpu;
 import com.restaurant.management.product.domain.repository.ProductRepository;
@@ -10,8 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -110,6 +113,34 @@ public class ProductRepositoryImpl implements ProductRepository {
         return Optional.ofNullable(productSkuMapper.selectOne(new LambdaQueryWrapper<ProductSku>()
                 .eq(ProductSku::getSpuId, spuId)
                 .eq(ProductSku::getSkuName, skuName)));
+    }
+
+    @Override
+    public List<ProductSpu> findAll(int pageNum, int pageSize) {
+        Page<ProductSpu> page = new Page<>(pageNum, pageSize);
+        Page<ProductSpu> result = productMapper.selectPage(page, new LambdaQueryWrapper<ProductSpu>()
+                .orderByDesc(ProductSpu::getCreateTime));
+        
+        List<ProductSpu> spus = result.getRecords();
+        if (spus.isEmpty()) {
+            return spus;
+        }
+        
+        // 批量查询所有 SKU
+        List<String> spuIds = spus.stream()
+                .map(ProductSpu::getSpuId)
+                .collect(Collectors.toList());
+        List<ProductSku> allSkus = productSkuMapper.selectList(new LambdaQueryWrapper<ProductSku>()
+                .in(ProductSku::getSpuId, spuIds));
+        
+        // 按 spuId 分组
+        Map<String, List<ProductSku>> skuMap = allSkus.stream()
+                .collect(Collectors.groupingBy(ProductSku::getSpuId));
+        
+        // 为每个 SPU 设置对应的 SKU 列表
+        spus.forEach(spu -> spu.replaceSkus(skuMap.getOrDefault(spu.getSpuId(), Collections.emptyList())));
+        
+        return spus;
     }
 }
 

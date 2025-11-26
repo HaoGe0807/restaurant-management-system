@@ -3,6 +3,7 @@ package com.restaurant.management.product.domain.repository;
 import com.restaurant.management.product.domain.model.ProductSku;
 import com.restaurant.management.product.domain.model.ProductSpu;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,4 +20,12 @@ public interface ProductRepository {
     Optional<ProductSku> findSkuBySkuId(String skuId);
 
     Optional<ProductSku> findSkuBySpuIdAndName(String spuId, String skuName);
+
+    /**
+     * 查询商品列表（分页）
+     * @param pageNum 页码，从1开始
+     * @param pageSize 每页大小
+     * @return 商品列表
+     */
+    List<ProductSpu> findAll(int pageNum, int pageSize);
 }
