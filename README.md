@@ -93,7 +93,7 @@ com.restaurant.management
 
 - **Java 17**
 - **Spring Boot 3.1.0**
-- **Spring Data JPA**
+- **MyBatis-Plus 3.5.5**
 - **MySQL 8.0**
 - **Lombok**
 - **Maven**
@@ -121,6 +121,53 @@ com.restaurant.management
 - JDK 17+
 - Maven 3.6+
 - MySQL 8.0+
+- Redis 6.0+（可选，用于缓存）
+- RabbitMQ 3.8+（可选，用于消息队列）
+
+### 数据库配置
+
+1. **创建数据库**
+
+```sql
+CREATE DATABASE restaurant_management CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+2. **执行建表脚本**
+
+项目中的 SQL 脚本位于 `src/main/resources/sql/` 目录下：
+- `product_spu_sku.sql` - 商品 SPU 和 SKU 表
+- `domain_events.sql` - 领域事件表
+- 其他表的 SQL 脚本（如订单表、库存表等）
+
+按顺序执行这些 SQL 脚本创建表结构。
+
+3. **配置数据库连接**
+
+编辑 `src/main/resources/application.yml` 文件，修改数据库连接信息：
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/restaurant_management?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root        # 修改为你的数据库用户名
+    password: root        # 修改为你的数据库密码
+```
+
+**配置说明：**
+- `url`: 数据库连接地址，默认端口 3306，数据库名 `restaurant_management`
+- `username`: MySQL 用户名
+- `password`: MySQL 密码
+- `serverTimezone`: 时区设置，建议使用 `Asia/Shanghai`
+
+**使用不同环境配置：**
+
+可以创建 `application-dev.yml`、`application-prod.yml` 等环境配置文件，然后在 `application.yml` 中激活：
+
+```yaml
+spring:
+  profiles:
+    active: dev  # 激活开发环境配置
+```
 
 ### 运行项目
 
@@ -131,6 +178,34 @@ mvn clean compile
 # 运行项目
 mvn spring-boot:run
 ```
+
+项目启动后，默认运行在 `http://localhost:8080`
+
+### 中间件启动
+
+#### Redis（可选）
+```bash
+# macOS
+brew services start redis
+
+# 或直接运行
+redis-server
+```
+
+#### RabbitMQ（可选）
+```bash
+# macOS
+brew services start rabbitmq
+
+# 或直接运行
+rabbitmq-server
+
+# 访问管理界面（默认端口 15672）
+# 用户名/密码：guest/guest
+# http://localhost:15672
+```
+
+**注意**：如果不需要 Redis 或 RabbitMQ，可以在 `application.yml` 中注释相关配置，应用仍可正常启动。
 
 ## 后续规划
 

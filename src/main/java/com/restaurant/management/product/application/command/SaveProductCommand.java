@@ -9,7 +9,7 @@ import java.util.List;
  * 创建商品命令（包含 SPU 与 SKU 信息）
  */
 @Data
-public class CreateProductCommand {
+public class SaveProductCommand {
 
     private String spuName;
     private String description;

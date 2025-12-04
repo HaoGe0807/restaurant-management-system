@@ -1,0 +1,113 @@
+spring:
+  application:
+    name: restaurant-management-system
+  
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/restaurant_management?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: ""  # 如果 MySQL 没有密码，使用空字符串
+  
+  # Jackson 配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+
+  # Redis 配置
+  redis:
+    host: localhost
+    port: 6379
+    password: ""  # 如果 Redis 没有密码，使用空字符串
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
+  # RabbitMQ 配置
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    # 发布确认
+    publisher-confirm-type: correlated
+    # 发布返回
+    publisher-returns: true
+    # 消费者配置
+    listener:
+      simple:
+        # 手动确认
+        acknowledge-mode: manual
+        # 并发消费者数量
+        concurrency: 1
+        # 最大并发消费者数量
+        max-concurrency: 10
+        # 预取数量
+        prefetch: 10
+        # 重试配置
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 1.0
+
+# MyBatis-Plus 配置
+mybatis-plus:
+  # Mapper XML 文件位置
+  mapper-locations: classpath:mapper/**/*.xml
+  # 实体类包路径
+  type-aliases-package: com.restaurant.management
+  configuration:
+    # 开启驼峰命名转换
+    map-underscore-to-camel-case: true
+    # 日志实现
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 主键类型：AUTO 表示数据库自增
+      id-type: AUTO
+      # 逻辑删除字段（如果使用）
+      # logic-delete-field: deleted
+      # logic-delete-value: 1
+      # logic-not-delete-value: 0
+
+# 缓存配置
+cache:
+  # 本地缓存配置（Caffeine）
+  local:
+    max-size: 1000  # 最大缓存条目数
+    expire-after-write-seconds: 300  # 写入后过期时间（秒）
+    expire-after-access-seconds: 180  # 访问后过期时间（秒）
+  # Redis 缓存配置
+  redis:
+    default-expiration-seconds: 3600  # 默认过期时间（秒）
+
+# 领域事件配置
+domain-event:
+  outbox:
+    # 批处理大小
+    batch-size: 50
+    # 最大重试次数
+    max-retry: 5
+    # 轮询间隔（毫秒）
+    fixed-delay-ms: 2000
+
+# 服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.restaurant.management: DEBUG
+    com.baomidou.mybatisplus: DEBUG
+

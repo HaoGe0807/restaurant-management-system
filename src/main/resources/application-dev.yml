@@ -1,0 +1,14 @@
+# 开发环境配置示例
+# 使用方式：在 application.yml 中添加 spring.profiles.active: dev
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/restaurant_management?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: ""  # 如果 MySQL 没有密码，使用空字符串；有密码则填写实际密码
+
+logging:
+  level:
+    com.restaurant.management: DEBUG
+    com.baomidou.mybatisplus: DEBUG
+

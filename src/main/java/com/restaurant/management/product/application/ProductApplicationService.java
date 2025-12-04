@@ -1,7 +1,7 @@
 package com.restaurant.management.product.application;
 
 import com.restaurant.management.common.domain.DomainEventPublisher;
-import com.restaurant.management.product.application.command.CreateProductCommand;
+import com.restaurant.management.product.application.command.SaveProductCommand;
 import com.restaurant.management.product.domain.model.ProductSku;
 import com.restaurant.management.product.domain.model.ProductSpu;
 import com.restaurant.management.product.domain.service.ProductDomainService;
@@ -23,7 +23,7 @@ public class ProductApplicationService {
     private final DomainEventPublisher domainEventPublisher;
 
     @Transactional
-    public ProductSpu createProduct(CreateProductCommand command) {
+    public ProductSpu createProduct(SaveProductCommand command) {
         if (command.getSkus() == null || command.getSkus().isEmpty()) {
             throw new IllegalArgumentException("至少需要一个SKU");
         }
@@ -57,7 +57,7 @@ public class ProductApplicationService {
     }
 
     @Transactional
-    public ProductSpu updateProduct(String spuId, CreateProductCommand command) {
+    public ProductSpu updateProduct(String spuId, SaveProductCommand command) {
         if (command.getSkus() == null || command.getSkus().isEmpty()) {
             throw new IllegalArgumentException("至少需要一个SKU");
         }

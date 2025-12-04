@@ -3,7 +3,7 @@ package com.restaurant.management.product.api;
 import com.restaurant.management.product.api.dto.SaveProductRequest;
 import com.restaurant.management.product.api.dto.ProductResponse;
 import com.restaurant.management.product.application.ProductApplicationService;
-import com.restaurant.management.product.application.command.CreateProductCommand;
+import com.restaurant.management.product.application.command.SaveProductCommand;
 import com.restaurant.management.product.domain.model.ProductSku;
 import com.restaurant.management.product.domain.model.ProductSpu;
 import jakarta.validation.Valid;
@@ -33,7 +33,7 @@ public class ProductController {
      */
     @PostMapping(value = "/createProduct")
     public ProductResponse createProduct(@Valid @RequestBody SaveProductRequest request) {
-        CreateProductCommand command = convertToCommand(request);
+        SaveProductCommand command = convertToCommand(request);
         ProductSpu product = productApplicationService.createProduct(command);
         return convertToResponse(product);
     }
@@ -55,7 +55,7 @@ public class ProductController {
         if (request.getSpuId() == null || request.getSpuId().trim().isEmpty()) {
             throw new IllegalArgumentException("SPU ID不能为空");
         }
-        CreateProductCommand command = convertToCommand(request);
+        SaveProductCommand command = convertToCommand(request);
         ProductSpu product = productApplicationService.updateProduct(request.getSpuId(), command);
         return convertToResponse(product);
     }
@@ -73,17 +73,17 @@ public class ProductController {
                 .collect(java.util.stream.Collectors.toList());
     }
     
-    private CreateProductCommand convertToCommand(SaveProductRequest request) {
+    private SaveProductCommand convertToCommand(SaveProductRequest request) {
         if (request.getSkus() == null || request.getSkus().isEmpty()) {
             throw new IllegalArgumentException("至少需要一个SKU");
         }
-        CreateProductCommand command = new CreateProductCommand();
+        SaveProductCommand command = new SaveProductCommand();
         command.setSpuName(request.getSpuName());
         command.setDescription(request.getDescription());
 
-        List<CreateProductCommand.SkuCommand> skuCommands = new ArrayList<>();
+        List<SaveProductCommand.SkuCommand> skuCommands = new ArrayList<>();
         for (SaveProductRequest.SkuRequest sku : request.getSkus()) {
-            CreateProductCommand.SkuCommand skuCommand = new CreateProductCommand.SkuCommand();
+            SaveProductCommand.SkuCommand skuCommand = new SaveProductCommand.SkuCommand();
             skuCommand.setSkuName(sku.getSkuName());
             skuCommand.setPrice(sku.getPrice());
             skuCommand.setInitialQuantity(sku.getInitialQuantity());
