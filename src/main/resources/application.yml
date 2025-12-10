@@ -115,6 +115,19 @@ springdoc:
     operations-sorter: alpha  # 操作排序
   packages-to-scan: com.restaurant.management  # 扫描的包路径
 
+# 监控与指标 (Actuator + Prometheus)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 # 日志配置
 logging:
   level:

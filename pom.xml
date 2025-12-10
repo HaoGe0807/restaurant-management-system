@@ -138,6 +138,20 @@
             <version>2.2.0</version>
         </dependency>
 
+        <!-- Spring Boot Actuator (指标/健康检查) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+
+        <!-- Prometheus 注册表 (Micrometer) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.11.4</version>
+        </dependency>
+
         <!-- 强制使用正确的 SLF4J 版本 -->
         <dependency>
             <groupId>org.slf4j</groupId>

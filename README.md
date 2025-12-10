@@ -26,6 +26,7 @@ restaurant-management-system/
 - **消息队列**: RabbitMQ
 - **API 文档**: Swagger/OpenAPI (springdoc-openapi)
 - **构建工具**: Maven 3.6+
+- **监控指标**: Spring Boot Actuator + Micrometer Prometheus
 
 ## 环境要求
 
@@ -153,6 +154,21 @@ mvn spring-boot:run
 ```
 
 项目启动后，默认运行在 `http://localhost:8080`
+
+### 监控与指标
+
+- 健康检查: `http://localhost:8080/actuator/health`
+- 指标数据: `http://localhost:8080/actuator/prometheus`
+
+示例 Prometheus 抓取配置：
+
+```yaml
+scrape_configs:
+  - job_name: 'restaurant-management-system'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['localhost:8080']
+```
 
 ### API 文档（Swagger）
 
