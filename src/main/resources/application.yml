@@ -104,6 +104,17 @@ server:
   servlet:
     context-path: /
 
+# Swagger/OpenAPI 配置
+springdoc:
+  api-docs:
+    path: /v3/api-docs  # API 文档 JSON 路径
+  swagger-ui:
+    path: /swagger-ui.html  # Swagger UI 访问路径
+    enabled: true
+    tags-sorter: alpha  # 标签排序
+    operations-sorter: alpha  # 操作排序
+  packages-to-scan: com.restaurant.management  # 扫描的包路径
+
 # 日志配置
 logging:
   level:

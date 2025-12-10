@@ -8,6 +8,7 @@ import com.restaurant.management.order.domain.model.Order;
 import com.restaurant.management.order.domain.model.OrderItem;
 import com.restaurant.management.order.domain.service.OrderDomainService;
 import com.restaurant.management.product.domain.model.ProductSku;
+import com.restaurant.management.product.domain.model.ProductSpu;
 import com.restaurant.management.product.domain.model.ProductStatus;
 import com.restaurant.management.product.domain.service.ProductDomainService;
 import lombok.RequiredArgsConstructor;
@@ -81,15 +82,20 @@ public class OrderApplicationService {
      */
     private Map<String, ProductSku> validateProductsAndInventory(CreateOrderCommand command) {
         Map<String, ProductSku> skuCache = new HashMap<>();
+        Map<String, ProductSpu> spuCache = new HashMap<>();
         for (CreateOrderCommand.OrderItemCommand item : command.getItems()) {
-            // 验证商品
+            // 验证商品 SKU
             ProductSku productSku = skuCache.computeIfAbsent(item.getSkuId(),
                     id -> productDomainService.getProductSku(id));
             
+            // 验证商品 SPU 状态（通过 SKU 的 spuId 获取 SPU）
+            ProductSpu productSpu = spuCache.computeIfAbsent(productSku.getSpuId(),
+                    id -> productDomainService.getProductSpu(id));
+            
             // 验证商品状态
-            if (productSku.getStatus() != ProductStatus.ACTIVE) {
+            if (productSpu.getStatus() != ProductStatus.ACTIVE) {
                 throw new DomainException("PRODUCT_INACTIVE", 
-                        "SKU[" + productSku.getSkuName() + "]已下架，无法下单");
+                        "SKU[" + productSku.getSkuName() + "]所属商品已下架，无法下单");
             }
             
             // 验证商品价格

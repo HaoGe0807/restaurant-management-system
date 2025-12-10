@@ -1,128 +1,96 @@
-# restaurant-management-system
+# 餐厅管理系统
 
-基于DDD（领域驱动设计）和Java技术栈的餐厅管理项目
+基于 DDD（领域驱动设计）架构的餐厅管理系统，采用 Spring Boot 3.1.0 构建。
 
 ## 项目结构
 
-本项目采用DDD架构思想，按照限界上下文（Bounded Context）进行分包，每个限界上下文都是一个独立的大分包。
-
-### 整体架构
-
 ```
-com.restaurant.management
-├── common/                    # 公共模块
-│   ├── domain/               # 领域基础（值对象、实体基类等）
-│   ├── infrastructure/       # 基础设施（配置、工具类等）
-│   └── exception/            # 异常定义
-│
-├── order/                    # 订单限界上下文（大分包）
-│   ├── api/                  # 接口层（Controller、DTO、Assembler）
-│   ├── application/          # 应用层（Service、Command、Query）
-│   ├── domain/               # 领域层（核心业务逻辑）
-│   │   ├── model/            # 领域模型（Entity、ValueObject、Aggregate）
-│   │   ├── repository/       # 仓储接口
-│   │   ├── service/          # 领域服务
-│   │   └── event/            # 领域事件
-│   └── infrastructure/       # 基础设施层（Repository实现、外部服务适配）
-│       ├── persistence/      # 持久化实现
-│       └── external/         # 外部服务适配
-│
-├── product/                  # 商品限界上下文（大分包）
-│   └── [同上结构]
-│
-├── inventory/                # 库存限界上下文（大分包）
-│   └── [同上结构]
-│
-└── RestaurantManagementApplication.java # 应用启动类
+restaurant-management-system/
+├── src/main/java/com/restaurant/management/
+│   ├── common/              # 公共模块（领域基类、基础设施）
+│   ├── product/             # 商品限界上下文
+│   ├── inventory/           # 库存限界上下文
+│   └── order/               # 订单限界上下文
+├── src/main/resources/
+│   ├── mapper/              # MyBatis XML 映射文件
+│   └── sql/                 # 数据库建表脚本
+└── docs/                    # 文档目录
 ```
 
-### 限界上下文说明
+## 技术栈
 
-#### 1. Order（订单上下文）
-- **职责**：管理订单的创建、支付、取消等业务
-- **核心聚合**：Order（订单聚合根）、OrderItem（订单项）
-- **主要功能**：
-  - 创建订单
-  - 订单支付
-  - 订单取消
-  - 订单查询
+- **框架**: Spring Boot 3.1.0
+- **ORM**: MyBatis-Plus 3.5.5
+- **数据库**: MySQL 8.0+
+- **缓存**: Caffeine (本地缓存) + Redis (分布式缓存)
+- **消息队列**: RabbitMQ
+- **API 文档**: Swagger/OpenAPI (springdoc-openapi)
+- **构建工具**: Maven 3.6+
 
-#### 2. Product（商品上下文）
-- **职责**：管理商品信息、商品上下架等业务
-- **核心聚合**：Product（商品聚合根）
-- **主要功能**：
-  - 创建商品
-  - 商品信息管理
-  - 商品上下架
-  - 商品查询
+## 环境要求
 
-#### 3. Inventory（库存上下文）
-- **职责**：管理库存的预留、扣减、释放等业务
-- **核心聚合**：Inventory（库存聚合根）
-- **主要功能**：
-  - 库存预留
-  - 库存扣减
-  - 库存释放
-  - 库存查询
-
-### DDD分层说明
-
-每个限界上下文都遵循DDD四层架构：
-
-1. **API层（接口层）**
-   - Controller：处理HTTP请求
-   - DTO：数据传输对象
-   - Assembler：DTO与领域对象的转换器
-
-2. **Application层（应用层）**
-   - ApplicationService：应用服务，协调领域对象
-   - Command：命令对象
-   - Query：查询对象
-
-3. **Domain层（领域层）**
-   - Model：领域模型（Entity、ValueObject、Aggregate）
-   - Repository：仓储接口（领域层定义）
-   - Service：领域服务
-   - Event：领域事件
-
-4. **Infrastructure层（基础设施层）**
-   - Persistence：持久化实现（Repository实现、JPA接口）
-   - External：外部服务适配
-
-### 技术栈
-
-- **Java 17**
-- **Spring Boot 3.1.0**
-- **MyBatis-Plus 3.5.5**
-- **MySQL 8.0**
-- **Lombok**
-- **Maven**
-
-### 设计原则
-
-1. **领域层独立**：领域层不依赖基础设施层
-2. **聚合根**：每个聚合只有一个根实体
-3. **仓储模式**：领域层定义接口，基础设施层实现
-4. **领域事件**：用于限界上下文间通信
-5. **应用服务**：编排领域对象，处理事务边界
-
-### 开发规范
-
-- 领域模型放在 `domain/model` 包下
-- 仓储接口在领域层定义，实现在基础设施层
-- 应用服务负责事务管理和跨聚合协调
-- 使用Command对象封装业务命令
-- 使用DTO进行API层的数据传输
-
-## 快速开始
-
-### 环境要求
-
-- JDK 17+
+- **JDK**: Java 17+（必需）
 - Maven 3.6+
 - MySQL 8.0+
 - Redis 6.0+（可选，用于缓存）
 - RabbitMQ 3.8+（可选，用于消息队列）
+
+### Java 版本配置
+
+**重要**: 此项目需要 Java 17，但不会影响其他项目。
+
+#### 方式一：使用启动脚本（推荐）
+
+项目根目录提供了 `run-with-java17.sh` 脚本，会自动查找并使用 Java 17：
+
+```bash
+# 运行项目
+./run-with-java17.sh spring-boot:run
+
+# 编译项目
+./run-with-java17.sh clean compile
+
+# 执行其他 Maven 命令
+./run-with-java17.sh test
+```
+
+#### 方式二：安装 Java 17 并配置项目级别
+
+1. **安装 Java 17**（如果还没有安装）：
+   ```bash
+   # 使用 Homebrew
+   brew install --cask temurin17
+   
+   # 或者访问 https://adoptium.net/zh-CN/temurin/releases/?version=17
+   ```
+
+2. **查找 Java 17 路径**：
+   ```bash
+   /usr/libexec/java_home -V
+   ```
+
+3. **配置项目使用 Java 17**：
+   
+   编辑 `.mvn/jvm.config` 文件，取消注释并设置正确的路径：
+   ```bash
+   -Djava.home=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+   ```
+   
+   或者编辑 `pom.xml` 中的 `maven-compiler-plugin`，取消注释 `executable` 配置。
+
+#### 方式三：临时设置环境变量（仅当前终端会话）
+
+```bash
+# 设置 Java 17 路径
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+export PATH="$JAVA_HOME/bin:$PATH"
+
+# 验证版本
+java -version
+
+# 运行项目
+mvn spring-boot:run
+```
 
 ### 数据库配置
 
@@ -172,14 +140,32 @@ spring:
 ### 运行项目
 
 ```bash
-# 编译项目
-mvn clean compile
+# 方式一：使用启动脚本（推荐）
+./run-with-java17.sh spring-boot:run
 
-# 运行项目
+# 方式二：如果已配置项目级别 Java 17
+mvn spring-boot:run
+
+# 方式三：临时设置环境变量后
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+export PATH="$JAVA_HOME/bin:$PATH"
 mvn spring-boot:run
 ```
 
 项目启动后，默认运行在 `http://localhost:8080`
+
+### API 文档（Swagger）
+
+项目集成了 Swagger/OpenAPI，启动后可以通过以下地址访问：
+
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **API 文档 JSON**: http://localhost:8080/v3/api-docs
+
+在 Swagger UI 中可以：
+- 查看所有 API 接口
+- 查看请求/响应参数说明
+- 在线测试 API 接口
+- 导出 API 文档
 
 ### 中间件启动
 

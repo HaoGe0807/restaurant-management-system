@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -28,8 +29,8 @@ public class ProductCreatedEventHandler {
      * 在商品创建事务提交后异步执行
      */
     @Async("domainEventExecutor")
-    @Transactional
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handle(ProductCreatedEvent event) {
         try {
             log.info("收到商品创建事件，SPU: {}, SKU数量: {}", event.getSpuId(), event.getSkus().size());
