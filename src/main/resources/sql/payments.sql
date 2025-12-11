@@ -1,0 +1,17 @@
+-- 支付单表
+CREATE TABLE IF NOT EXISTS payments (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    payment_no VARCHAR(64) NOT NULL UNIQUE,
+    order_no VARCHAR(64) NOT NULL,
+    user_id BIGINT NOT NULL,
+    channel VARCHAR(32) NOT NULL,
+    amount DECIMAL(18,2) NOT NULL,
+    status VARCHAR(32) NOT NULL,
+    credential VARCHAR(255),
+    channel_trade_no VARCHAR(128),
+    expire_time DATETIME,
+    reason VARCHAR(255),
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
