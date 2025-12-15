@@ -67,6 +67,7 @@ public class InventoryController {
         ReserveInventoryCommand command = new ReserveInventoryCommand();
         command.setSkuId(request.getSkuId());
         command.setQuantity(request.getQuantity());
+        command.setOrderId(request.getOrderId());
         return command;
     }
     

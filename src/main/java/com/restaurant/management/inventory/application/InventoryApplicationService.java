@@ -26,17 +26,34 @@ public class InventoryApplicationService {
     @Transactional
     public Inventory reserveInventory(ReserveInventoryCommand command) {
         // 调用领域服务，由领域层处理业务逻辑和持久化
-        return inventoryDomainService.reserveInventory(
+        String defaultWarehouseId = "DEFAULT_WAREHOUSE";
+        inventoryDomainService.reserveInventory(
                 command.getSkuId(),
-                command.getQuantity()
+                defaultWarehouseId,
+                command.getQuantity(),
+                command.getOrderId()
         );
+        
+        // 返回更新后的库存信息
+        return inventoryDomainService.getInventory(command.getSkuId(), defaultWarehouseId)
+                .orElseThrow(() -> new IllegalStateException("库存记录不存在"));
     }
     
     /**
-     * 根据商品ID查询库存
+     * 根据商品ID和仓库ID查询库存
+     */
+    public Inventory getInventory(String skuId, String warehouseId) {
+        return inventoryDomainService.getInventory(skuId, warehouseId)
+                .orElse(null);
+    }
+    
+    /**
+     * 根据商品ID查询默认仓库库存
      */
     public Inventory getInventoryBySkuId(String skuId) {
-        return inventoryDomainService.getInventoryBySkuId(skuId);
+        String defaultWarehouseId = "DEFAULT_WAREHOUSE";
+        return inventoryDomainService.getInventory(skuId, defaultWarehouseId)
+                .orElse(null);
     }
 }
 

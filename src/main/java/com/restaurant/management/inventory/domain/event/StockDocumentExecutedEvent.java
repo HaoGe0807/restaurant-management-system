@@ -13,27 +13,16 @@ import java.util.List;
  * 当库存单据执行完成时发布此事件
  */
 @Getter
-public class StockDocumentExecutedEvent implements DomainEvent {
+public class StockDocumentExecutedEvent extends DomainEvent {
     
     private final String documentId;
     private final DocumentType documentType;
     private final List<StockDocumentItem> items;
-    private final LocalDateTime occurredOn;
     
     public StockDocumentExecutedEvent(String documentId, DocumentType documentType, List<StockDocumentItem> items) {
+        super();
         this.documentId = documentId;
         this.documentType = documentType;
         this.items = items;
-        this.occurredOn = LocalDateTime.now();
-    }
-    
-    @Override
-    public LocalDateTime occurredOn() {
-        return occurredOn;
-    }
-    
-    @Override
-    public String eventType() {
-        return "StockDocumentExecuted";
     }
 }

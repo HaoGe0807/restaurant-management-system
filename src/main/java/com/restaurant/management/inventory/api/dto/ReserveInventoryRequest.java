@@ -16,5 +16,8 @@ public class ReserveInventoryRequest {
     @NotNull(message = "数量不能为空")
     @Positive(message = "数量必须大于0")
     private Integer quantity;
+    
+    @NotNull(message = "订单ID不能为空")
+    private String orderId;
 }
 

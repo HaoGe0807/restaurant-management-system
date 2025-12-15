@@ -10,5 +10,6 @@ public class ReserveInventoryCommand {
     
     private String skuId;
     private Integer quantity;
+    private String orderId;
 }
 

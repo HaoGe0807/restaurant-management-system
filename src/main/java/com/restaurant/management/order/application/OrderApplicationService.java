@@ -55,10 +55,7 @@ public class OrderApplicationService {
         // 1. 验证商品和库存（强一致性，必须同步验证）
         Map<String, ProductSku> skuMap = validateProductsAndInventory(command);
         
-        // 2. 预留库存（强一致性，必须同步预留）
-        reserveInventory(command);
-        
-        // 3. 转换命令为领域对象（这是应用层的职责：适配外部输入）
+        // 2. 转换命令为领域对象（这是应用层的职责：适配外部输入）
         List<OrderItem> items = command.getItems().stream()
                 .map(item -> {
                     ProductSku sku = skuMap.get(item.getSkuId());
@@ -72,8 +69,13 @@ public class OrderApplicationService {
                 })
                 .collect(Collectors.toList());
         
-        // 4. 创建订单（调用领域服务）
-        return orderDomainService.createOrder(command.getUserId(), items);
+        // 3. 创建订单（调用领域服务）
+        Order order = orderDomainService.createOrder(command.getUserId(), items);
+        
+        // 4. 预留库存（强一致性，必须同步预留）
+        reserveInventory(command, order.getId().toString());
+        
+        return order;
     }
     
     /**
@@ -104,8 +106,11 @@ public class OrderApplicationService {
                         "SKU[" + productSku.getSkuName() + "]价格已变更，请刷新后重试");
             }
             
-            // 验证库存
-            Inventory inventory = inventoryDomainService.getInventoryBySkuId(item.getSkuId());
+            // 验证库存（使用默认仓库）
+            String defaultWarehouseId = "DEFAULT_WAREHOUSE";
+            Inventory inventory = inventoryDomainService.getInventory(item.getSkuId(), defaultWarehouseId)
+                .orElseThrow(() -> new DomainException("INVENTORY_NOT_FOUND", 
+                    "SKU[" + productSku.getSkuName() + "]库存记录不存在"));
             
             // 验证库存数量
             if (inventory.getAvailableQuantity() < item.getQuantity()) {
@@ -121,10 +126,16 @@ public class OrderApplicationService {
      * 预留库存
      * 强一致性：必须同步预留，确保库存被锁定
      */
-    private void reserveInventory(CreateOrderCommand command) {
+    private void reserveInventory(CreateOrderCommand command, String orderId) {
+        String defaultWarehouseId = "DEFAULT_WAREHOUSE";
         for (CreateOrderCommand.OrderItemCommand item : command.getItems()) {
             // 预留库存（强一致性，同步操作）
-            inventoryDomainService.reserveInventory(item.getSkuId(), item.getQuantity());
+            inventoryDomainService.reserveInventory(
+                item.getSkuId(), 
+                defaultWarehouseId, 
+                item.getQuantity(), 
+                orderId
+            );
         }
     }
     

@@ -93,22 +93,14 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     
     @Override
     public List<Inventory> findInventoriesNeedingReplenishment() {
-        // 查找总库存量低于或等于安全库存的记录
-        return inventoryMapper.selectList(
-            new LambdaQueryWrapper<Inventory>()
-                .le(Inventory::getAvailableQuantity, 0) // 这里简化，实际需要比较总库存与安全库存
-                .eq(Inventory::getStatus, InventoryStatus.NORMAL)
-        );
+        // 使用Mapper中的专门方法
+        return inventoryMapper.findInventoriesNeedingReplenishment();
     }
     
     @Override
     public List<Inventory> findOverstockedInventories() {
-        // 查找库存量超过最大库存的记录
-        return inventoryMapper.selectList(
-            new LambdaQueryWrapper<Inventory>()
-                .gt(Inventory::getAvailableQuantity, 1000) // 这里简化，实际需要比较总库存与最大库存
-                .eq(Inventory::getStatus, InventoryStatus.NORMAL)
-        );
+        // 使用Mapper中的专门方法
+        return inventoryMapper.findOverstockedInventories();
     }
     
     @Override

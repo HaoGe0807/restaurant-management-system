@@ -11,27 +11,16 @@ import java.time.LocalDateTime;
  * 当库存单据审核通过时发布此事件
  */
 @Getter
-public class StockDocumentApprovedEvent implements DomainEvent {
+public class StockDocumentApprovedEvent extends DomainEvent {
     
     private final String documentId;
     private final DocumentType documentType;
     private final String approverId;
-    private final LocalDateTime occurredOn;
     
     public StockDocumentApprovedEvent(String documentId, DocumentType documentType, String approverId) {
+        super();
         this.documentId = documentId;
         this.documentType = documentType;
         this.approverId = approverId;
-        this.occurredOn = LocalDateTime.now();
-    }
-    
-    @Override
-    public LocalDateTime occurredOn() {
-        return occurredOn;
-    }
-    
-    @Override
-    public String eventType() {
-        return "StockDocumentApproved";
     }
 }
