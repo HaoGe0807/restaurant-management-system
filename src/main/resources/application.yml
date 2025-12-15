@@ -128,6 +128,16 @@ management:
     tags:
       application: ${spring.application.name}
 
+# Nacos 配置中心
+nacos:
+  config:
+    enabled: true  # 是否启用 Nacos 配置中心
+    server-addr: localhost:8848  # Nacos 服务器地址
+    namespace: ""  # 命名空间（可选）
+    group: DEFAULT_GROUP  # 配置组
+    data-id: ${spring.application.name}.yml  # 配置文件名
+    file-extension: yml  # 配置文件扩展名
+
 # 日志配置
 logging:
   level:
