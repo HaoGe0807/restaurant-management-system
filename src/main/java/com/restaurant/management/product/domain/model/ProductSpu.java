@@ -6,6 +6,9 @@ import com.restaurant.management.common.domain.AggregateRoot;
 import com.restaurant.management.common.domain.BaseEntity;
 import com.restaurant.management.common.domain.DomainEvent;
 import com.restaurant.management.product.domain.event.ProductCreatedEvent;
+import com.restaurant.management.product.domain.event.ProductDeletionEvent;
+import com.restaurant.management.product.domain.event.ProductStatusChangedEvent;
+import com.restaurant.management.product.domain.event.ProductUpdatedEvent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -98,6 +101,62 @@ public class ProductSpu extends BaseEntity implements AggregateRoot {
                 .collect(Collectors.toList());
 
         addDomainEvent(new ProductCreatedEvent(this.spuId, this.spuName, skuSnapshots));
+    }
+    
+    /**
+     * 更新商品信息并发布更新事件
+     */
+    public void updateProductInfo(String spuName, String description) {
+        String oldSpuName = this.spuName;
+        this.spuName = spuName;
+        this.description = description;
+        
+        // 发布商品更新事件
+        addDomainEvent(new ProductUpdatedEvent(this.spuId, oldSpuName, this.spuName, this.skus));
+    }
+    
+    /**
+     * 删除商品前的验证和事件发布
+     */
+    public void prepareForDeletion() {
+        if (this.status == ProductStatus.ACTIVE) {
+            throw new IllegalStateException("激活状态的商品不能删除，请先下架商品");
+        }
+        
+        // 发布商品删除事件，用于清理相关库存数据
+        addDomainEvent(new ProductDeletionEvent(this.spuId, this.skus.stream()
+                .map(ProductSku::getSkuId)
+                .collect(Collectors.toList())));
+    }
+    
+    /**
+     * 下架商品
+     */
+    public void deactivate() {
+        if (this.status == ProductStatus.INACTIVE) {
+            return;
+        }
+        
+        ProductStatus oldStatus = this.status;
+        this.status = ProductStatus.INACTIVE;
+        
+        // 发布商品状态变更事件
+        addDomainEvent(new ProductStatusChangedEvent(this.spuId, oldStatus, this.status));
+    }
+    
+    /**
+     * 上架商品
+     */
+    public void activate() {
+        if (this.status == ProductStatus.ACTIVE) {
+            return;
+        }
+        
+        ProductStatus oldStatus = this.status;
+        this.status = ProductStatus.ACTIVE;
+        
+        // 发布商品状态变更事件
+        addDomainEvent(new ProductStatusChangedEvent(this.spuId, oldStatus, this.status));
     }
 
     @Override

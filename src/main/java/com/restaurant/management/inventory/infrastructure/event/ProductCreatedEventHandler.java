@@ -1,5 +1,6 @@
 package com.restaurant.management.inventory.infrastructure.event;
 
+import com.restaurant.management.inventory.domain.model.Inventory;
 import com.restaurant.management.inventory.domain.service.InventoryDomainService;
 import com.restaurant.management.product.domain.event.ProductCreatedEvent;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +38,19 @@ public class ProductCreatedEventHandler {
 
             event.getSkus().forEach(skuSnapshot -> {
                 log.info("创建库存，SKU: {}, 初始库存: {}", skuSnapshot.getSkuId(), skuSnapshot.getInitialQuantity());
-                inventoryDomainService.createInventory(
-                        skuSnapshot.getSkuId(),
-                        skuSnapshot.getInitialQuantity()
+                
+                // 获取默认仓库ID（实际项目中可能需要从配置中获取）
+                String defaultWarehouseId = "DEFAULT_WAREHOUSE";
+                
+                // 创建库存对象
+                Inventory inventory = Inventory.create(
+                    skuSnapshot.getSkuId(),
+                    defaultWarehouseId,
+                    skuSnapshot.getInitialQuantity()
                 );
+                
+                // 通过领域服务创建库存
+                inventoryDomainService.createInventory(inventory);
             });
             
             log.info("库存创建成功，SPU: {}", event.getSpuId());
